@@ -99,5 +99,39 @@ namespace SQLiteViewer.Views
         }
 
 
+
+        private void TreeView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            // 获取点击的元素
+            var element = e.OriginalSource as FrameworkElement;
+
+            // 向上查找 TreeViewItem
+            TreeViewItem treeViewItem = null;
+            while (element != null && treeViewItem == null)
+            {
+                if (element is TreeViewItem tvItem) // 修改变量名，避免冲突
+                {
+                    treeViewItem = tvItem;
+                }
+                else
+                {
+                    element = VisualTreeHelper.GetParent(element) as FrameworkElement;
+                }
+            }
+
+            if (treeViewItem != null &&
+                treeViewItem.DataContext is SQLiteViewer.Models.FileSystemItem fileSystemItem) // 修改变量名，避免冲突
+            {
+                var vm = (this.DataContext as MainWindowViewModel)?.FileExplorerViewModel;
+                vm?.OnFileDoubleClicked(fileSystemItem);
+
+                // 添加调试信息
+                System.Diagnostics.Debug.WriteLine($"TreeView_MouseDoubleClick: {fileSystemItem.Name}, 路径: {fileSystemItem.FullPath}, 是文件夹: {fileSystemItem.IsDirectory}");
+
+                e.Handled = true;
+            }
+        }
+
+
     }
 }

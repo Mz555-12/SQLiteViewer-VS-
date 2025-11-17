@@ -84,15 +84,16 @@
               ItemsSource="{Binding FileExplorerViewModel.FileSystemItems}"
               BorderThickness="0"
               Background="Transparent"
-              Name="FileTreeView">
-                        <!-- 添加名称以便在代码后台访问 -->
+              Name="FileTreeView"
+              MouseDoubleClick="TreeView_MouseDoubleClick">
+                        <!-- 在 TreeView 上处理双击事件 -->
 
                         <TreeView.ItemContainerStyle>
                             <Style TargetType="TreeViewItem">
                                 <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
                                 <EventSetter Event="Expanded" Handler="TreeViewItem_Expanded"/>
                                 <EventSetter Event="Collapsed" Handler="TreeViewItem_Collapsed"/>
-                                 <EventSetter Event="MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick"/>
+                                <!-- 移除 MouseDoubleClick 事件绑定 -->
                             </Style>
                         </TreeView.ItemContainerStyle>
 
