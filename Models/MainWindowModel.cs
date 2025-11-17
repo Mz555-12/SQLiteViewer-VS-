@@ -22,6 +22,8 @@ namespace SQLiteViewer.Models
             }
         }
 
-        public WebBrowser webBrowser { get; set; }
+        public TextBlock currentFolder_text { get; set; }
+
+        public string selectedFolderPath { get; set; }
     }
 }

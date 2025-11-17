@@ -51,8 +51,8 @@ namespace SQLiteViewer.Mothods
             string tempScriptFile = Path.Combine(tempDir, "TempHtmlData\\script.js");
             string tempStyleFile = Path.Combine(tempDir, "TempHtmlData\\style.css");
 
-            string sourceScriptPath = System.IO.Path.Combine(Environment.CurrentDirectory, "HtmlData\\script.js");
-            string sourceStylePath = System.IO.Path.Combine(Environment.CurrentDirectory, "HtmlData\\style.css");
+            string sourceScriptPath = System.IO.Path.Combine(Environment.CurrentDirectory, "Assets\\HtmlData\\script.js");
+            string sourceStylePath = System.IO.Path.Combine(Environment.CurrentDirectory, "Assets\\HtmlData\\style.css");
 
             //CSS、js
             CopyFile(sourceScriptPath, tempScriptFile);
@@ -71,7 +71,7 @@ namespace SQLiteViewer.Mothods
         private string GetHtmlContentWithData(string filePath)
         {
             // 如果有现有的HTML文件，读取并替换数据
-            string sourceHtmlPath = System.IO.Path.Combine(Environment.CurrentDirectory, "HtmlData\\index.html");
+            string sourceHtmlPath = System.IO.Path.Combine(Environment.CurrentDirectory, "Assets\\HtmlData\\index.html");
             if (!File.Exists(sourceHtmlPath))
             {
                 MessageBox.Show("index.html文件没找到");

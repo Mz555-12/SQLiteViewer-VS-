@@ -26,7 +26,11 @@ namespace SQLiteViewer.Views
         public MainWindow()
         {
             InitializeComponent();
+
+            MainWindowModel.Instance.currentFolder_text = this.currentFolder_text;
+
             this.DataContext = new MainWindowViewModel();
+
         }
 
         private void RowDefinition_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -131,6 +135,10 @@ namespace SQLiteViewer.Views
                 e.Handled = true;
             }
         }
+
+
+
+     
 
 
     }

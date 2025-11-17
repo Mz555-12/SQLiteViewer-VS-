@@ -22,16 +22,16 @@ namespace SQLiteViewer.ViewModels
         // 添加文件选择事件
         public event EventHandler<string> FileSelected;
 
-        public FileExplorerViewModel()
+        public FileExplorerViewModel(string folderpath)
         {
             _fileSystemService = new FileSystemService();
             FileSystemItems = new ObservableCollection<FileSystemItem>();
 
             // 默认加载桌面路径，你可以修改为其他路径
-            LoadFileSystem("E:\\ColleageLife");
+            
         }
 
-        private void LoadFileSystem(string path)
+        public void LoadFileSystem(string path)
         {
             FileSystemItems.Clear();
             var items = _fileSystemService.LoadFileSystem(path);

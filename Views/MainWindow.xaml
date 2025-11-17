@@ -7,7 +7,7 @@
         xmlns:converters="clr-namespace:SQLiteViewer.Converters"
         xmlns:models="clr-namespace:SQLiteViewer.Models"
         mc:Ignorable="d"
-        Title="SQLiteViewer" Height="540" Width="797" ResizeMode="NoResize"  FontSize="14" FontWeight="Normal" FontFamily="Microsoft YaHei" Background="{x:Null}" WindowStyle="None" WindowStartupLocation="CenterScreen" AllowsTransparency="True">
+        Title="SQLiteViewer" Height="540" Width="797" ResizeMode="NoResize"  FontSize="13.5" FontWeight="Normal" FontFamily="Microsoft YaHei" Background="{x:Null}" WindowStyle="None" WindowStartupLocation="CenterScreen" AllowsTransparency="True">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -62,21 +62,28 @@
             <Grid Grid.Row="1" >
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" MinWidth="270"/>
+                    <ColumnDefinition Width="Auto" MinWidth="200"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 
                 <!-- 左侧可折叠面板 -->
                 <Grid Grid.Column="0" Background="#EEE">
+                    <!-- 添加右键菜单 -->
+                    <Grid.ContextMenu >
+                        <ContextMenu Width="130" HorizontalOffset="130" VerticalOffset="1">
+                            <MenuItem Header="打开文件" Command="{Binding OpenFileCommand}" CommandParameter="file"/>
+                            <MenuItem Header="打开文件夹" Command="{Binding OpenFileCommand}"/>
+                        </ContextMenu>
+                    </Grid.ContextMenu>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
                     <!-- 标题栏 -->
-                    <Border Background="#DDD" Padding="10,5" BorderBrush="#CCC" BorderThickness="0,0,0,1">
-                        <TextBlock Text="文件浏览器" FontWeight="Bold"/>
+                    <Border Background="#DDD" Padding="10,5" BorderBrush="#CCC" BorderThickness="0,0,0,1" Margin="0,0,0,5">
+                        <TextBlock  Text="文件浏览器" FontWeight="Bold" Name="currentFolder_text"/>
                     </Border>
 
                     <!-- 文件树 -->
@@ -85,7 +92,9 @@
               BorderThickness="0"
               Background="Transparent"
               Name="FileTreeView"
-              MouseDoubleClick="TreeView_MouseDoubleClick">
+              MouseDoubleClick="TreeView_MouseDoubleClick"
+              ScrollViewer.VerticalScrollBarVisibility="Hidden"
+               ScrollViewer.HorizontalScrollBarVisibility="Hidden">
                         <!-- 在 TreeView 上处理双击事件 -->
 
                         <TreeView.ItemContainerStyle>
