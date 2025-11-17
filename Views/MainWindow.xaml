@@ -5,14 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SQLiteViewer"
         xmlns:converters="clr-namespace:SQLiteViewer.Converters"
+        xmlns:models="clr-namespace:SQLiteViewer.Models"
         mc:Ignorable="d"
-        Title="SQLiteViewer" Height="540" Width="797" ResizeMode="NoResize"  FontSize="15" FontWeight="Normal" FontFamily="Microsoft YaHei" Background="{x:Null}" WindowStyle="None" WindowStartupLocation="CenterScreen" AllowsTransparency="True">
+        Title="SQLiteViewer" Height="540" Width="797" ResizeMode="NoResize"  FontSize="14" FontWeight="Normal" FontFamily="Microsoft YaHei" Background="{x:Null}" WindowStyle="None" WindowStartupLocation="CenterScreen" AllowsTransparency="True">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Styles/CommonStyles.xaml"/>
                 
             </ResourceDictionary.MergedDictionaries>
+            <converters:FileIconConverter x:Key="FileIconConverter"/>
         </ResourceDictionary>
 
     </Window.Resources>
@@ -64,8 +66,49 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
+                
+                <!-- 左侧可折叠面板 -->
+                <Grid Grid.Column="0" Background="#EEE">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-               
+                    <!-- 标题栏 -->
+                    <Border Background="#DDD" Padding="10,5" BorderBrush="#CCC" BorderThickness="0,0,0,1">
+                        <TextBlock Text="文件浏览器" FontWeight="Bold"/>
+                    </Border>
+
+                    <!-- 文件树 -->
+                    <TreeView Grid.Row="1" 
+              ItemsSource="{Binding FileExplorerViewModel.FileSystemItems}"
+              BorderThickness="0"
+              Background="Transparent"
+              Name="FileTreeView">
+                        <!-- 添加名称以便在代码后台访问 -->
+
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="TreeViewItem">
+                                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                                <EventSetter Event="Expanded" Handler="TreeViewItem_Expanded"/>
+                                <EventSetter Event="Collapsed" Handler="TreeViewItem_Collapsed"/>
+                                 <EventSetter Event="MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick"/>
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+
+                        <TreeView.Resources>
+                            <!-- 文件夹样式 -->
+                            <HierarchicalDataTemplate DataType="{x:Type models:FileSystemItem}" 
+                                      ItemsSource="{Binding Children}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding IsDirectory, Converter={StaticResource FileIconConverter}}" 
+                               Margin="0,0,5,0"/>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </StackPanel>
+                            </HierarchicalDataTemplate>
+                        </TreeView.Resources>
+                    </TreeView>
+                </Grid>
 
                 <!-- 分隔条 -->
                 <GridSplitter Grid.Column="1" 

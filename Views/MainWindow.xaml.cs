@@ -49,6 +49,55 @@ namespace SQLiteViewer.Views
             this.border_top.BorderThickness = is_top ? new Thickness(0, 0, 0, 2) : new Thickness(0);
         }
 
-    
+        private void TreeViewItem_Expanded(object sender, RoutedEventArgs e)
+        {
+            if (sender is TreeViewItem treeViewItem)
+            {
+                if (treeViewItem.DataContext is SQLiteViewer.Models.FileSystemItem item)
+                {
+                    var vm = (this.DataContext as MainWindowViewModel)?.FileExplorerViewModel;
+                    vm?.OnItemExpanded(item);
+
+                    // 添加调试信息
+                    System.Diagnostics.Debug.WriteLine($"展开文件夹: {item.Name}, 路径: {item.FullPath}");
+                }
+            }
+            e.Handled = true;
+        }
+
+        private void TreeViewItem_Collapsed(object sender, RoutedEventArgs e)
+        {
+            if (sender is TreeViewItem treeViewItem)
+            {
+                if (treeViewItem.DataContext is SQLiteViewer.Models.FileSystemItem item)
+                {
+                    // 可以在这里处理折叠事件
+                    System.Diagnostics.Debug.WriteLine($"折叠文件夹: {item.Name}");
+                }
+            }
+            e.Handled = true;
+        }
+
+        private void TreeViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            // 获取触发事件的元素
+            var element = e.OriginalSource as FrameworkElement;
+
+            // 向上查找 TreeViewItem
+            while (element != null && !(element is TreeViewItem))
+            {
+                element = VisualTreeHelper.GetParent(element) as FrameworkElement;
+            }
+
+            if (element is TreeViewItem treeViewItem &&
+                treeViewItem.DataContext is SQLiteViewer.Models.FileSystemItem item)
+            {
+                var vm = (this.DataContext as MainWindowViewModel)?.FileExplorerViewModel;
+                vm?.OnFileDoubleClicked(item);
+                e.Handled = true;
+            }
+        }
+
+
     }
 }

@@ -18,7 +18,25 @@ namespace SQLiteViewer.ViewModels
     public class MainWindowViewModel:ObservableObject
     {
         private ConnetHtml connetHtml = new ConnetHtml();
-       
+
+        private FileExplorerViewModel _fileExplorerViewModel;
+        public FileExplorerViewModel FileExplorerViewModel
+        {
+            get
+            {
+                if (_fileExplorerViewModel == null)
+                {
+                    _fileExplorerViewModel = new FileExplorerViewModel();
+                    // 订阅文件选择事件
+                    _fileExplorerViewModel.FileSelected += (sender, filePath) =>
+                    {
+                        // 当文件被双击时，执行文件选择命令
+                        FileSelectedCommand.Execute(filePath);
+                    };
+                }
+                return _fileExplorerViewModel;
+            }
+        }
 
         private CommandBase _closeMainWindowCommand;
 
@@ -54,6 +72,33 @@ namespace SQLiteViewer.ViewModels
                     });
                 }
                 return _testCommand;
+            }
+        }
+
+        private CommandBase _fileSelectedCommand;
+        public CommandBase FileSelectedCommand
+        {
+            get
+            {
+                if (_fileSelectedCommand == null)
+                {
+                    _fileSelectedCommand = new CommandBase();
+                    _fileSelectedCommand.DoExecute = new Action<object>((filePath) =>
+                    {
+                        // 这里处理文件选择事件
+                        string path = filePath as string;
+                        if (!string.IsNullOrEmpty(path))
+                        {
+                            // 调用你的方法，例如：
+                            // connetHtml.OpenHtmlWithData(path);
+                            MessageBox.Show($"选中的文件: {path}");
+
+                            // 这里可以调用你的数据库打开方法
+                            // connetHtml.OpenHtmlWithData(path);
+                        }
+                    });
+                }
+                return _fileSelectedCommand;
             }
         }
 
