@@ -142,8 +142,6 @@ namespace SQLiteViewer.Json
             SettingModel loadedConfig = LoadConfig();
             mainWindowModel.selectedFolderPath = loadedConfig.setting_selectedFolderPath ;
 
-            historyManager.HistoryItems.Clear();
-
             if (loadedConfig.FileHistory != null)
             {
                 foreach (var item in loadedConfig.FileHistory.Take(30)) // 限制加载数量

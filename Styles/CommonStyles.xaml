@@ -8,7 +8,7 @@
     </FontFamily>
     
     <ControlTemplate TargetType="Button" x:Key="ButtonTemplate">
-        <Border Background="#44FFFFFF" Name="back">
+        <Border Background="#44FFFFFF" Name="back" BorderBrush="{TemplateBinding BorderBrush }" BorderThickness="{TemplateBinding BorderThickness}">
             <ContentControl Content="{TemplateBinding Content}" FontFamily="{StaticResource iconfont}"  VerticalAlignment="Center" HorizontalAlignment="Center" />
         </Border>
         <ControlTemplate.Triggers>

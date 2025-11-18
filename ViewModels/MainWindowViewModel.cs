@@ -17,7 +17,7 @@ using System.Windows.Navigation;
 
 namespace SQLiteViewer.ViewModels
 {
-    public class MainWindowViewModel:ObservableObject
+    public class MainWindowViewModel : ObservableObject
     {
         private ConnetHtml connetHtml = new ConnetHtml();
         private MainWindowModel mainWindowModel = MainWindowModel.Instance;
@@ -25,7 +25,7 @@ namespace SQLiteViewer.ViewModels
 
         private FileExplorerViewModel _fileExplorerViewModel;
 
-       
+
         public FileExplorerViewModel FileExplorerViewModel
         {
             get
@@ -87,7 +87,7 @@ namespace SQLiteViewer.ViewModels
                     _fileSelectedCommand.DoExecute = new Action<object>((filePath) =>
                     {
                         string path = filePath as string;
-                        
+
                         if (!string.IsNullOrEmpty(path))
                         {
                             // 添加到历史记录
@@ -119,7 +119,7 @@ namespace SQLiteViewer.ViewModels
                         if (result == "file")
                         {
                             var openFileDialog = new Microsoft.Win32.OpenFileDialog();
-                            
+
                             // 设置文件过滤器，只显示.db文件
                             openFileDialog.Filter = "数据库文件 (*.db)|*.db|所有文件 (*.*)|*.*";
                             openFileDialog.FilterIndex = 1; // 默认选择第一个过滤器
@@ -169,14 +169,14 @@ namespace SQLiteViewer.ViewModels
                     _refurbishFileCommand = new CommandBase();
                     _refurbishFileCommand.DoExecute = new Action<object>((obj) =>
                     {
-                        if(string.IsNullOrEmpty(mainWindowModel.selectedFolderPath))
+                        if (string.IsNullOrEmpty(mainWindowModel.selectedFolderPath))
                         {
                             MessageBox.Show("请先选择文件夹！");
                             return;
                         }
                         ShowFileName(mainWindowModel.selectedFolderPath);
 
-                        
+
                         FileExplorerViewModel.LoadFileSystem(mainWindowModel.selectedFolderPath);
 
                     });
@@ -186,10 +186,68 @@ namespace SQLiteViewer.ViewModels
             }
         }
 
+        private CommandBase _deleteHistoryCommand;
+        public CommandBase DeleteHistoryCommand
+        {
+            get
+            {
+                if (_deleteHistoryCommand == null)
+                {
+                    _deleteHistoryCommand = new CommandBase();
+                    _deleteHistoryCommand.DoExecute = new Action<object>((obj) =>
+                    {
+                        if (obj is FileHistoryItem historyItem)
+                        {
+                            // 从历史记录中删除
+                            historyManager.RemoveHistoryItem(historyItem);
+
+                            // 保存配置（更新后的历史记录）
+                            Setting.Instance.SetBaseModel_Json();
+                        }
+                    });
+                }
+                return _deleteHistoryCommand;
+            }
+        }
+
+        private CommandBase _deleteAllHistoryCommand;
+        public CommandBase DeleteAllHistoryCommand
+        {
+            get
+            {
+                if (_deleteAllHistoryCommand == null)
+                {
+                    _deleteAllHistoryCommand = new CommandBase();
+                    _deleteAllHistoryCommand.DoExecute = new Action<object>((obj) =>
+                    {
+                        // 确认对话框
+                        var result = MessageBox.Show(
+                            "是否删除全部历史记录？","系统提示！",
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Warning,
+                            MessageBoxResult.No
+                        );
+
+                        if (result == MessageBoxResult.Yes)
+                        {
+                            // 从历史记录中删除
+                            historyManager.ClearHistory();
+
+                            // 保存配置（更新后的历史记录）
+                            Setting.Instance.SetBaseModel_Json();
+                        }
+                    });
+
+                }
+                return _deleteAllHistoryCommand;
+            }
+        }
+
+
         public void ShowFileName(string path)
         {
             string folderName = Path.GetFileName(path);
-            
+
             if (string.IsNullOrEmpty(folderName))
             {
                 // 获取盘符，比如 "C:\" -> "C盘"

@@ -90,6 +90,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Base\BindingProxy.cs" />
     <Compile Include="Base\CommandBase.cs" />
     <Compile Include="Converters\FileIconConverter.cs" />
     <Compile Include="Json\Setting.cs" />
