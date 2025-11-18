@@ -40,32 +40,6 @@ h1 {
     margin-bottom: 10px;
 }
 
-.file-section {
-    background-color: #f8f9fa;
-    padding: 15px;
-    border-radius: 6px;
-    margin-bottom: 20px;
-}
-
-.file-input {
-    margin-bottom: 10px;
-}
-
-.customization-panel {
-    background-color: #f8f9fa;
-    padding: 15px;
-    border-radius: 6px;
-    margin-bottom: 20px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-.customization-group {
-    display: flex;
-    flex-direction: column;
-    min-width: 150px;
-}
 
 label {
     margin-bottom: 5px;

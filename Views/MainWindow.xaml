@@ -14,6 +14,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Styles/CommonStyles.xaml"/>
                 <ResourceDictionary Source="../Styles/HistoryItemStyle.xaml"/>
+                <ResourceDictionary Source="../Styles/FolderItemStyle.xaml"/>
                 
             </ResourceDictionary.MergedDictionaries>
             <converters:FileIconConverter x:Key="FileIconConverter"/>
@@ -36,22 +37,20 @@
                         <RowDefinition Height="40"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <Border BorderThickness="0,0,0,2" BorderBrush="Gray">
+                    <Border Style="{StaticResource TitleBarStyle}">
                         <Grid Background="#00FFFFFF"  MouseLeftButtonDown="RowDefinition_MouseLeftButtonDown" >
                             <Label Content="SQLiteViewer V1.0" VerticalAlignment="Center" Margin="5,0,0,0" FontSize="13" FontWeight="Bold"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,10,0">
                                 <Border Height="30" Width="40"  VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <Border BorderBrush="Gray" BorderThickness="0" Width="26"  HorizontalAlignment="Center" Margin="0,1" Name="border_top">
-                                        <Button Template="{StaticResource ButtonTemplate}" Content="&#xe67b;" FontWeight="Bold"   FontSize="19" Click="TopWindow_Click" BorderThickness="0"/>
+                                    <Border BorderBrush="Gray" BorderThickness="0" Width="40"  HorizontalAlignment="Center" Margin="0,1" Name="border_top">
+                                        <Button Template="{StaticResource ButtonTemplate}" Content="&#xe67b;" FontWeight="Bold" FontSize="19" Click="TopWindow_Click" BorderThickness="0" Background="#55DAE3EA"/>
                                     </Border>
                                 </Border>
 
 
-                                <!--<Button Height="30" Width="40" Name="btn_setbase" Template="{StaticResource ButtonTemplate}" Content="&#xe62e;" FontWeight="Bold" FontSize="19" 
-                                Command="{Binding CloseSetBaseViewCommand}"/>-->
 
-                                <Button Height="30" Width="40" Template="{StaticResource ButtonTemplate}" Content="&#xe650;" Click="Minimum_Click" BorderThickness="0"/>
-                                <Button Height="30" Width="40" Template="{StaticResource ButtonTemplate}" Content="&#xe601;" FontWeight="Bold" BorderThickness="0"
+                                <Button Height="30" Width="40" Template="{StaticResource ButtonTemplate}" Content="&#xe650;" Click="Minimum_Click" BorderThickness="0" Background="#55DAE3EA" Margin="10,0"/>
+                                <Button Height="30" Width="40" Template="{StaticResource ButtonTemplate}" Content="&#xe601;" FontWeight="Bold" BorderThickness="0"  Background="#55DAE3EA"
                                 Command="{Binding CloseMainWindowCommand}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
 
@@ -71,7 +70,7 @@
                 </Grid.ColumnDefinitions>
                 
                 <!-- 左侧可折叠面板 -->
-                <Grid Grid.Column="0" Background="#FFF">
+                <Grid Grid.Column="0" Style="{StaticResource FileExplorerStyle}">
                     <!-- 添加右键菜单 -->
                     <Grid.ContextMenu >
                         <ContextMenu Width="130" HorizontalOffset="130" VerticalOffset="1">
@@ -86,19 +85,18 @@
                     </Grid.RowDefinitions>
 
                     <!-- 标题栏 -->
-                    <Border Background="#F8F9FA" Padding="15,10" BorderBrush="#E9ECEF" BorderThickness="0,0,0,1" >
+                    <Border Padding="15,10" Style="{StaticResource FileExplorerTitleStyle}">
                         <TextBlock Text="文件浏览器" FontWeight="Bold" FontSize="14" Foreground="#495057" Name="currentFolder_text"/>
                     </Border>
 
                     <!-- 文件树 -->
                     <TreeView Grid.Row="1"  Margin="0,8,0,0"
-              ItemsSource="{Binding FileExplorerViewModel.FileSystemItems}"
-              BorderThickness="0"
-              Background="Transparent"
-              Name="FileTreeView"
-              MouseDoubleClick="TreeView_MouseDoubleClick"
-              ScrollViewer.VerticalScrollBarVisibility="Hidden"
-               ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+          ItemsSource="{Binding FileExplorerViewModel.FileSystemItems}"
+          Style="{StaticResource FileTreeViewStyle}"
+          Name="FileTreeView"
+          MouseDoubleClick="TreeView_MouseDoubleClick"
+          ScrollViewer.VerticalScrollBarVisibility="Hidden"
+          ScrollViewer.HorizontalScrollBarVisibility="Hidden">
                         <!-- 在 TreeView 上处理双击事件 -->
 
                         <TreeView.ItemContainerStyle>
@@ -127,36 +125,33 @@
                 <!-- 分隔条 -->
                 <GridSplitter Grid.Column="1" 
                   Width="3" HorizontalAlignment="Stretch"
-                  Background="DarkGray" ResizeBehavior="PreviousAndNext"
+                  Background="#B4D6F1" ResizeBehavior="PreviousAndNext"
                   ResizeDirection="Columns"/>
 
                 <!-- 右侧面板 -->
-                <Grid Grid.Column="2">
+                <Grid Grid.Column="2" Style="{StaticResource HistorySectionStyle}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
                     <!-- 标题 -->
-                    <Border Background="#F8F9FA" Padding="15,10" BorderBrush="#E9ECEF" BorderThickness="0,0,0,1">
+                    <Border Style="{StaticResource HistoryTitleStyle}" Padding="15,10">
                         <Grid>
                             <TextBlock Text="最近打开的文件" FontWeight="Bold"  Foreground="#495057"/>
-                            <Button  Content="全部清除" Width="70" Height="20" FontSize="12" HorizontalAlignment="Right"   
-                                     Template="{StaticResource ButtonTemplate}" BorderBrush="#C5E0F5" BorderThickness="1"
-                                     Command="{Binding DeleteAllHistoryCommand}"/>
+                            <Button  Content="全部清除" Width="70" Height="20" FontSize="12" HorizontalAlignment="Right"  
+                             Style="{StaticResource ClearHistoryButtonStyle}"
+                             Command="{Binding DeleteAllHistoryCommand}"/>
                         </Grid>
                         
                     </Border>
                        
                     
                     <!-- 历史记录列表 -->
-                    <ListBox Grid.Row="1"
-             ItemsSource="{Binding historyManager.HistoryItems}"
-             ItemContainerStyle="{StaticResource HistoryItemStyle}"
-             BorderThickness="0"
-             Background="White"
-             ScrollViewer.VerticalScrollBarVisibility="Auto"
-             MouseDoubleClick="HistoryListBox_MouseDoubleClick">
+                    <ListBox Grid.Row="1" BorderThickness="0"
+         ItemsSource="{Binding historyManager.HistoryItems}"
+         ItemContainerStyle="{StaticResource HistoryItemStyle}"
+         MouseDoubleClick="HistoryListBox_MouseDoubleClick">
 
                         <ListBox.ItemTemplate>
                             <DataTemplate>
@@ -204,42 +199,6 @@
                         </ListBox.ItemTemplate>
 
                         <!-- 空状态提示 -->
-                        <ListBox.Style>
-                            <Style TargetType="ListBox">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="ListBox">
-                                            <Border BorderBrush="{TemplateBinding BorderBrush}" 
-                                    BorderThickness="{TemplateBinding BorderThickness}" 
-                                    Background="{TemplateBinding Background}">
-                                                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                                    <ItemsPresenter/>
-                                                </ScrollViewer>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                                <Style.Triggers>
-                                    <Trigger Property="HasItems" Value="False">
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="ListBox">
-                                                    <Border BorderBrush="{TemplateBinding BorderBrush}" 
-                                            BorderThickness="{TemplateBinding BorderThickness}" 
-                                            Background="{TemplateBinding Background}">
-                                                        <TextBlock Text="暂无打开记录" 
-                                                   HorizontalAlignment="Center" 
-                                                   VerticalAlignment="Center"
-                                                   Foreground="#6C757D"
-                                                   FontStyle="Italic"/>
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ListBox.Style>
                     </ListBox>
                 </Grid>
             </Grid>

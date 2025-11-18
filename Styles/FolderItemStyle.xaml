@@ -1,0 +1,63 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- 定义本地颜色资源 -->
+    <SolidColorBrush x:Key="FolderPrimaryBlue" Color="#770078D7"/>
+    <SolidColorBrush x:Key="FolderLightBlue" Color="#E6F2FA"/>
+    <SolidColorBrush x:Key="FolderTextPrimary" Color="#262626"/>
+
+    <!-- 文件浏览器整体样式 -->
+    <Style x:Key="FileExplorerStyle" TargetType="Grid">
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#FAFCFF" Offset="0"/>
+                    <GradientStop Color="#F5F9FF" Offset="1"/>
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 文件浏览器标题栏样式 -->
+    <Style x:Key="FileExplorerTitleStyle" TargetType="Border">
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#F8FBFF" Offset="0"/>
+                    <GradientStop Color="#ECF5FF" Offset="1"/>
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="BorderBrush" Value="#DEEBFF"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="Padding" Value="15,10"/>
+    </Style>
+
+    <!-- 文件树样式 -->
+    <Style x:Key="FileTreeViewStyle" TargetType="TreeView">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Foreground" Value="{StaticResource FolderTextPrimary}"/>
+        <Setter Property="FontSize" Value="13"/>
+    </Style>
+
+    <!-- 树状视图项样式 -->
+    <Style x:Key="TreeViewItemStyle" TargetType="TreeViewItem">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Foreground" Value="{StaticResource FolderTextPrimary}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Padding" Value="2,4"/>
+        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource FolderLightBlue}"/>
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="{StaticResource FolderPrimaryBlue}"/>
+                <Setter Property="Foreground" Value="White"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+</ResourceDictionary>
