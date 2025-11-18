@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using SQLiteViewer.Models;
+using SQLiteViewer.Mothods;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -32,8 +34,9 @@ namespace SQLiteViewer.Json
         private static readonly string ConfigFilePath = Path.Combine(
             ConfigDirectory, "SetBase_Config.json");
 
-        public SettingModel settingModel = SettingModel.Instance;
-        public MainWindowModel mainWindowModel = MainWindowModel.Instance;
+        private SettingModel settingModel = SettingModel.Instance;
+        private MainWindowModel mainWindowModel = MainWindowModel.Instance;
+        private FileHistoryManager historyManager = FileHistoryManager.Instance;
 
         /// <summary>
         /// 保存配置到JSON文件
@@ -129,7 +132,8 @@ namespace SQLiteViewer.Json
         {
             settingModel.setting_selectedFolderPath = mainWindowModel.selectedFolderPath;
 
-
+            
+            settingModel.FileHistory = new ObservableCollection<FileHistoryItem>(historyManager.HistoryItems);
             return SaveConfig(settingModel);
         }
 
@@ -137,6 +141,16 @@ namespace SQLiteViewer.Json
         {
             SettingModel loadedConfig = LoadConfig();
             mainWindowModel.selectedFolderPath = loadedConfig.setting_selectedFolderPath ;
+
+            historyManager.HistoryItems.Clear();
+
+            if (loadedConfig.FileHistory != null)
+            {
+                foreach (var item in loadedConfig.FileHistory.Take(30)) // 限制加载数量
+                {
+                    historyManager.HistoryItems.Add(item);
+                }
+            }
         }
     }
 }

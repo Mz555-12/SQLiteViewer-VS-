@@ -21,6 +21,7 @@ namespace SQLiteViewer.ViewModels
     {
         private ConnetHtml connetHtml = new ConnetHtml();
         private MainWindowModel mainWindowModel = MainWindowModel.Instance;
+        public FileHistoryManager historyManager { get; set; } = FileHistoryManager.Instance;
 
         private FileExplorerViewModel _fileExplorerViewModel;
 
@@ -71,26 +72,10 @@ namespace SQLiteViewer.ViewModels
                 return _closeMainWindowCommand;
             }
         }
-        private CommandBase _testCommand;
 
-        public CommandBase TestCommand
-        {
-            get
-            {
-                if (_testCommand == null)
-                {
-                    _testCommand = new CommandBase();
-                    _testCommand.DoExecute = new Action<object>((o) =>
-                    {
-                        //SendDataToHtmlSafely(@"E:\ColleageLife\Learn\C#\\Project\SQLiteViewer\bin\Debug\Html");
-                        connetHtml.OpenHtmlWithData(@"E:\ColleageLife\Learn\Mydatabase\mydemo.db");
-                        MessageBox.Show("运行完毕");
-                    });
-                }
-                return _testCommand;
-            }
-        }
-
+        /// <summary>
+        /// 处理文件选择事件
+        /// </summary>
         private CommandBase _fileSelectedCommand;
         public CommandBase FileSelectedCommand
         {
@@ -101,12 +86,18 @@ namespace SQLiteViewer.ViewModels
                     _fileSelectedCommand = new CommandBase();
                     _fileSelectedCommand.DoExecute = new Action<object>((filePath) =>
                     {
-                        // 这里处理文件选择事件
                         string path = filePath as string;
+                        
                         if (!string.IsNullOrEmpty(path))
                         {
-                            mainWindowModel.fileInfoDic = FileInfoItem.GetFileInfo(path);
+                            // 添加到历史记录
+                            FileHistoryManager.Instance.AddFileHistory(path);
+
                             connetHtml.OpenHtmlWithData(path);
+
+
+                            // 保存配置（包含历史记录）
+                            Setting.Instance.SetBaseModel_Json();
                         }
                     });
                 }
@@ -135,9 +126,12 @@ namespace SQLiteViewer.ViewModels
 
                             if (openFileDialog.ShowDialog() == true)
                             {
-                                string selectedFilePath = openFileDialog.FileName;
+                                string selectedFileName = openFileDialog.FileName;
+
+                                // 添加到历史记录
+                                FileHistoryManager.Instance.AddFileHistory(selectedFileName);
                                 // 处理打开.db文件的逻辑
-                                connetHtml.OpenHtmlWithData(selectedFilePath);
+                                connetHtml.OpenHtmlWithData(selectedFileName);
                             }
                             return;
                         }

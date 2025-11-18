@@ -12,6 +12,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Styles/CommonStyles.xaml"/>
+                <ResourceDictionary Source="../Styles/HistoryItemStyle.xaml"/>
                 
             </ResourceDictionary.MergedDictionaries>
             <converters:FileIconConverter x:Key="FileIconConverter"/>
@@ -83,12 +84,12 @@
                     </Grid.RowDefinitions>
 
                     <!-- 标题栏 -->
-                    <Border Background="#DDD" Padding="10,5" BorderBrush="#CCC" BorderThickness="0,0,0,1" Margin="0,0,0,5">
-                        <TextBlock  Text="文件浏览器" FontWeight="Bold" Name="currentFolder_text"/>
+                    <Border Background="#F8F9FA" Padding="15,10" BorderBrush="#E9ECEF" BorderThickness="0,0,0,1" >
+                        <TextBlock Text="文件浏览器" FontWeight="Bold" FontSize="14" Foreground="#495057" Name="currentFolder_text"/>
                     </Border>
 
                     <!-- 文件树 -->
-                    <TreeView Grid.Row="1" 
+                    <TreeView Grid.Row="1"  Margin="0,8,0,0"
               ItemsSource="{Binding FileExplorerViewModel.FileSystemItems}"
               BorderThickness="0"
               Background="Transparent"
@@ -129,7 +130,99 @@
 
                 <!-- 右侧面板 -->
                 <Grid Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
+                    <!-- 标题 -->
+                    <Border Background="#F8F9FA" Padding="15,10" BorderBrush="#E9ECEF" BorderThickness="0,0,0,1">
+                        <TextBlock Text="最近打开的文件" FontWeight="Bold" FontSize="14" Foreground="#495057"/>
+                    </Border>
+                       
+                    
+                    <!-- 历史记录列表 -->
+                    <ListBox Grid.Row="1"
+             ItemsSource="{Binding historyManager.HistoryItems}"
+             ItemContainerStyle="{StaticResource HistoryItemStyle}"
+             BorderThickness="0"
+             Background="White"
+             ScrollViewer.VerticalScrollBarVisibility="Auto"
+             MouseDoubleClick="HistoryListBox_MouseDoubleClick">
+
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- 文件名（左侧） -->
+                                    <TextBlock Grid.Column="0" 
+                               Text="{Binding FileName}" 
+                               VerticalAlignment="Center"
+                               FontFamily="Microsoft YaHei"
+                               TextTrimming="CharacterEllipsis"/>
+
+                                    <!-- 打开时间（中间） -->
+                                    <TextBlock Grid.Column="1" 
+                               Text="{Binding TriggerTime, StringFormat='yyyy-MM-dd HH:mm'}" 
+                               VerticalAlignment="Center"
+                               Margin="30,0"
+                               Foreground="#6C757D"
+                               FontSize="12"/>
+
+                                    <!-- 文件大小（右侧） -->
+                                    <TextBlock Grid.Column="2" 
+                               Text="{Binding FileSize, StringFormat='{}{0} KB'}" 
+                               Margin="10,0"
+                               VerticalAlignment="Center"
+                               Foreground="#6C757D"
+                               FontSize="12"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+
+                        <!-- 空状态提示 -->
+                        <ListBox.Style>
+                            <Style TargetType="ListBox">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBox">
+                                            <Border BorderBrush="{TemplateBinding BorderBrush}" 
+                                    BorderThickness="{TemplateBinding BorderThickness}" 
+                                    Background="{TemplateBinding Background}">
+                                                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                                    <ItemsPresenter/>
+                                                </ScrollViewer>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="HasItems" Value="False">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ListBox">
+                                                    <Border BorderBrush="{TemplateBinding BorderBrush}" 
+                                            BorderThickness="{TemplateBinding BorderThickness}" 
+                                            Background="{TemplateBinding Background}">
+                                                        <TextBlock Text="暂无打开记录" 
+                                                   HorizontalAlignment="Center" 
+                                                   VerticalAlignment="Center"
+                                                   Foreground="#6C757D"
+                                                   FontStyle="Italic"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListBox.Style>
+                    </ListBox>
                 </Grid>
             </Grid>
         </Grid>

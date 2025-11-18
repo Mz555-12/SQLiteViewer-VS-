@@ -25,6 +25,5 @@ namespace SQLiteViewer.Models
         public TextBlock currentFolder_text { get; set; }
 
         public string selectedFolderPath { get; set; }
-        public Dictionary<string, object> fileInfoDic { get; set; }
     }
 }

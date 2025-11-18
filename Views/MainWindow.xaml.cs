@@ -53,6 +53,11 @@ namespace SQLiteViewer.Views
             this.border_top.BorderThickness = is_top ? new Thickness(0, 0, 0, 2) : new Thickness(0);
         }
 
+       /// <summary>
+       /// 展开文件夹事件
+       /// </summary>
+       /// <param name="sender"></param>
+       /// <param name="e"></param>
         private void TreeViewItem_Expanded(object sender, RoutedEventArgs e)
         {
             if (sender is TreeViewItem treeViewItem)
@@ -136,9 +141,25 @@ namespace SQLiteViewer.Views
             }
         }
 
+        /// <summary>
+        /// 历史记录双击事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void HistoryListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var listBox = sender as ListBox;
+            if (listBox?.SelectedItem is FileHistoryItem historyItem)
+            {
+                // 触发文件选择命令
+                var vm = (this.DataContext as MainWindowViewModel);
+                vm?.FileSelectedCommand.Execute(historyItem.OriginPath);
+
+                e.Handled = true;
+            }
+        }
 
 
-     
 
 
     }

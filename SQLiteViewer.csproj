@@ -78,6 +78,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Styles\HistoryItemStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -89,11 +93,12 @@
     <Compile Include="Base\CommandBase.cs" />
     <Compile Include="Converters\FileIconConverter.cs" />
     <Compile Include="Json\Setting.cs" />
+    <Compile Include="Models\FileHistoryItem.cs" />
     <Compile Include="Models\FileSystemItem.cs" />
     <Compile Include="Models\MainWindowModel.cs" />
     <Compile Include="Models\SettingModel.cs" />
     <Compile Include="Mothods\ConnetHtml.cs" />
-    <Compile Include="Mothods\FileInfoItem.cs" />
+    <Compile Include="Mothods\FileHistoryManager.cs" />
     <Compile Include="Mothods\FileSystemService.cs" />
     <Compile Include="ViewModels\FileExplorerViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
