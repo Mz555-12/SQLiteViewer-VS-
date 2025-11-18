@@ -105,8 +105,7 @@ namespace SQLiteViewer.ViewModels
                         string path = filePath as string;
                         if (!string.IsNullOrEmpty(path))
                         {
-                            // 调用你的方法，例如：
-                            // connetHtml.OpenHtmlWithData(path);
+                            mainWindowModel.fileInfoDic = FileInfoItem.GetFileInfo(path);
                             connetHtml.OpenHtmlWithData(path);
                         }
                     });
@@ -153,7 +152,7 @@ namespace SQLiteViewer.ViewModels
 
                             ShowFileName(mainWindowModel.selectedFolderPath);
 
-                            // 这里添加您的文件夹处理代码
+                            // 展示文件夹内容
                             FileExplorerViewModel.LoadFileSystem(mainWindowModel.selectedFolderPath);
 
                             Setting.Instance.SetBaseModel_Json();
@@ -163,6 +162,33 @@ namespace SQLiteViewer.ViewModels
 
                 }
                 return _openFileCommand;
+            }
+        }
+
+        private CommandBase _refurbishFileCommand;
+        public CommandBase RefurbishFileCommand
+        {
+            get
+            {
+                if (_refurbishFileCommand == null)
+                {
+                    _refurbishFileCommand = new CommandBase();
+                    _refurbishFileCommand.DoExecute = new Action<object>((obj) =>
+                    {
+                        if(string.IsNullOrEmpty(mainWindowModel.selectedFolderPath))
+                        {
+                            MessageBox.Show("请先选择文件夹！");
+                            return;
+                        }
+                        ShowFileName(mainWindowModel.selectedFolderPath);
+
+                        
+                        FileExplorerViewModel.LoadFileSystem(mainWindowModel.selectedFolderPath);
+
+                    });
+
+                }
+                return _refurbishFileCommand;
             }
         }
 

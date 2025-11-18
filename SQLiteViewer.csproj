@@ -93,6 +93,7 @@
     <Compile Include="Models\MainWindowModel.cs" />
     <Compile Include="Models\SettingModel.cs" />
     <Compile Include="Mothods\ConnetHtml.cs" />
+    <Compile Include="Mothods\FileInfoItem.cs" />
     <Compile Include="Mothods\FileSystemService.cs" />
     <Compile Include="ViewModels\FileExplorerViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />

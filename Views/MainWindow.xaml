@@ -68,10 +68,11 @@
                 </Grid.ColumnDefinitions>
                 
                 <!-- 左侧可折叠面板 -->
-                <Grid Grid.Column="0" Background="#EEE">
+                <Grid Grid.Column="0" Background="#FFF">
                     <!-- 添加右键菜单 -->
                     <Grid.ContextMenu >
                         <ContextMenu Width="130" HorizontalOffset="130" VerticalOffset="1">
+                            <MenuItem Header="刷新" Command="{Binding RefurbishFileCommand}" CommandParameter="file"/>
                             <MenuItem Header="打开文件" Command="{Binding OpenFileCommand}" CommandParameter="file"/>
                             <MenuItem Header="打开文件夹" Command="{Binding OpenFileCommand}"/>
                         </ContextMenu>
