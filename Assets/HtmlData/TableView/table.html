@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>表格视图</title>
+    <link rel="stylesheet" href="table.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+</head>
+<body>
+    <div class="table-view">
+        <div id="tableList" class="table-list"></div>
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>正在加载数据...</p>
+        </div>
+        <div id="tableContainer" class="table-container"></div>
+    </div>
+    <script src="table.js"></script>
+</body>
+</html>

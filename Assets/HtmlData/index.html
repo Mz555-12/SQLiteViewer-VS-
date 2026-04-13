@@ -1,36 +1,27 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SQLite数据库查看器</title>
+    <title>SQLite 数据库查看器</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
 </head>
-
 <body>
     <div class="container">
-
-        <div class="tables-section">
-
-            <div id="tableList" class="table-list">
-                <!-- 表格按钮将在这里动态生成 -->
-            </div>
-
-            <div id="loading" class="loading">
-                <div class="spinner"></div>
-                <p>正在加载数据...</p>
-            </div>
-
-            <div id="tableContainer" class="table-container">
-                <!-- 表格将在这里显示 -->
-            </div>
+        <!-- 视图切换按钮 -->
+        <div class="view-toggle">
+            <label class="toggle-btn">
+                <input type="radio" name="viewMode" value="table" checked> 📋 表格视图
+            </label>
+            <label class="toggle-btn">
+                <input type="radio" name="viewMode" value="chart"> 📈 曲线视图
+            </label>
         </div>
+
+        <!-- iframe 容器 -->
+        <iframe id="viewFrame" src="TableView/table.html" frameborder="0"></iframe>
     </div>
 
     <script src="script.js"></script>
-
 </body>
-
 </html>

@@ -16,6 +16,14 @@ public class LocalFileServer : IDisposable
     private bool _isRunning;
     private string _injectedHtml;
 
+    // 新增字段：心跳检测
+    private DateTime _lastHeartbeat;
+    private Timer _idleTimer;
+    private readonly object _heartbeatLock = new object();
+    private const int IdleTimeoutSeconds = 10;  // 秒无心跳则停止
+
+    private bool _isDisposed = false;
+
     public LocalFileServer(string filePath)
     {
         _filePath = filePath;
@@ -23,6 +31,22 @@ public class LocalFileServer : IDisposable
         _url = $"http://localhost:{port}/";
         _listener = new HttpListener();
         _listener.Prefixes.Add(_url);
+
+        _lastHeartbeat = DateTime.UtcNow;
+        _idleTimer = new Timer(CheckIdle, null, TimeSpan.FromSeconds(IdleTimeoutSeconds), TimeSpan.FromSeconds(IdleTimeoutSeconds));
+    }
+
+    private void CheckIdle(object state)
+    {
+        lock (_heartbeatLock)
+        {
+            if (!_isRunning) return;
+            if ((DateTime.UtcNow - _lastHeartbeat).TotalSeconds > IdleTimeoutSeconds)
+            {
+                Console.WriteLine($"端口 {_url} 空闲超时，自动停止。");
+                Stop();
+            }
+        }
     }
 
     public string GetFileUrl() => _url + "db";
@@ -33,6 +57,16 @@ public class LocalFileServer : IDisposable
         _serverThread = new Thread(Listen);
         _serverThread.Start();
         Console.WriteLine($"服务器已启动: {_url}");
+    }
+
+    private void Stop()
+    {
+        if (!_isRunning) return;
+        _isRunning = false;
+        _listener?.Stop();
+        _listener?.Close();
+        _idleTimer?.Change(Timeout.Infinite, Timeout.Infinite);
+        Console.WriteLine($"服务器已停止: {_url}");
     }
 
     private void Listen()
@@ -61,6 +95,7 @@ public class LocalFileServer : IDisposable
         var request = context.Request;
         var response = context.Response;
 
+        // 设置 CORS 头
         response.AddHeader("Access-Control-Allow-Origin", "*");
         response.AddHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
 
@@ -73,28 +108,84 @@ public class LocalFileServer : IDisposable
 
         string path = request.Url.AbsolutePath;
 
+        // 心跳端点
+        if (path == "/heartbeat")
+        {
+            lock (_heartbeatLock)
+            {
+                _lastHeartbeat = DateTime.UtcNow;
+            }
+            response.StatusCode = 204; // No Content
+            response.Close();
+            return;
+        }
+
+        // 数据库文件端点
         if (path == "/db")
         {
             ServeDatabaseFile(response);
+            return;
         }
-        else if (path == "/" || path == "/index.html")
+
+        // 主页面
+        if (path == "/" || path == "/index.html")
         {
             string html = GetInjectedHtml();
             ServeString(response, html, "text/html");
+            return;
         }
-        else if (path == "/script.js")
+
+        // 静态资源（script.js / style.css）
+        if (path == "/script.js")
         {
             byte[] jsBytes = ResourceHelper.ReadEmbeddedResourceAsBytes("SQLiteViewer.Assets.HtmlData.script.js");
             ServeBytes(response, jsBytes, "application/javascript");
+            return;
         }
-        else if (path == "/style.css")
+
+        if (path == "/style.css")
         {
             byte[] cssBytes = ResourceHelper.ReadEmbeddedResourceAsBytes("SQLiteViewer.Assets.HtmlData.style.css");
             ServeBytes(response, cssBytes, "text/css");
+            return;
         }
-        else
+
+        // 其他嵌入资源映射
+        string resourceName = "SQLiteViewer.Assets.HtmlData" + path.Replace("/", ".");
+        try
+        {
+            if (path.EndsWith(".html", StringComparison.OrdinalIgnoreCase))
+            {
+                string content = ResourceHelper.ReadEmbeddedResource(resourceName);
+                ServeString(response, content, "text/html");
+            }
+            else if (path.EndsWith(".js", StringComparison.OrdinalIgnoreCase))
+            {
+                byte[] data = ResourceHelper.ReadEmbeddedResourceAsBytes(resourceName);
+                ServeBytes(response, data, "application/javascript");
+            }
+            else if (path.EndsWith(".css", StringComparison.OrdinalIgnoreCase))
+            {
+                byte[] data = ResourceHelper.ReadEmbeddedResourceAsBytes(resourceName);
+                ServeBytes(response, data, "text/css");
+            }
+            else
+            {
+                response.StatusCode = 404;
+                response.Close();
+            }
+        }
+        catch (FileNotFoundException)
         {
             response.StatusCode = 404;
+            response.Close();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"提供资源 '{path}' 失败: {ex.Message}");
+            response.StatusCode = 500;
+            byte[] errorBytes = Encoding.UTF8.GetBytes("Internal Server Error");
+            response.OutputStream.Write(errorBytes, 0, errorBytes.Length);
             response.Close();
         }
     }
@@ -161,7 +252,6 @@ public class LocalFileServer : IDisposable
     {
         if (_injectedHtml == null)
         {
-            // 后备：返回原始 HTML（不带注入）
             return ResourceHelper.ReadEmbeddedResource("SQLiteViewer.Assets.HtmlData.index.html");
         }
         return _injectedHtml;
@@ -169,9 +259,12 @@ public class LocalFileServer : IDisposable
 
     public void Dispose()
     {
-        _isRunning = false;
-        _listener?.Stop();
-        _listener?.Close();
-        _serverThread?.Join(1000);
+        if (!_isDisposed)
+        {
+            _isDisposed = true;
+            Stop();
+            _idleTimer?.Dispose();
+            _serverThread?.Join(1000);
+        }
     }
 }

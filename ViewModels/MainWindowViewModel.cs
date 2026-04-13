@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+
 using System.Windows.Navigation;
 
 namespace SQLiteViewer.ViewModels
@@ -55,8 +56,8 @@ namespace SQLiteViewer.ViewModels
             //    ? "❌ 程序集中没有任何嵌入资源！"
             //    : string.Join("\n", resourceNames);
 
-            //MessageBox.Show(message, "嵌入资源列表");
-
+            
+            //Debug.WriteLine(message);
             Setting.Instance.LoadedBaseModel_Json();
             ShowFileName(mainWindowModel.selectedFolderPath);
             FileExplorerViewModel.LoadFileSystem(mainWindowModel.selectedFolderPath);
@@ -75,9 +76,11 @@ namespace SQLiteViewer.ViewModels
                     _closeMainWindowCommand.DoExecute = new Action<object>((o) =>
                     {
                         Setting.Instance.SetBaseModel_Json();
-                        
+
+                        // 释放所有由 ConnetHtml 创建的服务器实例，关闭所有端口
+                        ConnetHtml.DisposeAllServers();
+
                         (o as Window).Close();
-                        connetHtml.Dispose();
                     });
                 }
                 return _closeMainWindowCommand;
@@ -111,7 +114,7 @@ namespace SQLiteViewer.ViewModels
                             Setting.Instance.SetBaseModel_Json();
                         }
                     });
-                }
+                }   
                 return _fileSelectedCommand;
             }
         }

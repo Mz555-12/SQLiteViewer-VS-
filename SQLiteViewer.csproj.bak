@@ -143,9 +143,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\HtmlData\index.html" />
-    <Content Include="Assets\HtmlData\script.js" />
-    <Content Include="Assets\HtmlData\style.css" />
+      <EmbeddedResource Include="Assets\HtmlData\index.html" />
+		  <EmbeddedResource Include="Assets\HtmlData\script.js" />
+		  <EmbeddedResource Include="Assets\HtmlData\style.css" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,6 +1,7 @@
 ﻿using SQLiteViewer.Base;
-using SQLiteViewer.Mothods;  // 确保引用 ResourceHelper 所在命名空间
+using SQLiteViewer.Mothods;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 
@@ -10,27 +11,60 @@ namespace SQLiteViewer.Mothods
     {
         private LocalFileServer _fileServer;
 
+        // 静态列表，跟踪所有活跃的服务器实例
+        private static readonly List<LocalFileServer> _activeServers = new List<LocalFileServer>();
+        private static readonly object _serverListLock = new object();
+
         public void OpenHtmlWithData(string filePath)
         {
-            _fileServer = new LocalFileServer(filePath);
+            
 
-            // 生成带数据库 URL 的 HTML 字符串（直接从嵌入资源读取）
-            string dbUrl = _fileServer.GetFileUrl();
+            var server = new LocalFileServer(filePath);
+
+            lock (_serverListLock)
+            {
+                _activeServers.Add(server);
+            }
+
+            string dbUrl = server.GetFileUrl();
             string htmlContent = GetHtmlContentWithData(dbUrl);
+            server.SetInjectedHtml(htmlContent);
+            server.Start();
 
-            // 将注入后的 HTML 设置到服务器
-            _fileServer.SetInjectedHtml(htmlContent);
-
-            _fileServer.Start();
-
-            // 打开浏览器访问根路径
-            string baseUrl = _fileServer.GetFileUrl().Replace("/db", "/");
+            string baseUrl = server.GetFileUrl().Replace("/db", "/");
             OpenInSystemBrowser(baseUrl);
         }
 
+        // 静态方法：释放所有活动服务器（供主窗口关闭时调用）
+        public static void DisposeAllServers()
+        {
+            lock (_serverListLock)
+            {
+                foreach (var server in _activeServers.ToArray())
+                {
+                    server.Dispose();
+                }
+                _activeServers.Clear();
+            }
+        }
+
+        // 当单个 ConnetHtml 实例被释放时，将其持有的服务器从列表中移除并释放
+        public void Dispose()
+        {
+            if (_fileServer != null)
+            {
+                lock (_serverListLock)
+                {
+                    _activeServers.Remove(_fileServer);
+                }
+                _fileServer.Dispose();
+                _fileServer = null;
+            }
+        }
+
+        // 以下方法保持不变
         private string GetHtmlContentWithData(string dbUrl)
         {
-            // 从嵌入资源读取原始 index.html
             string originalHtml = ResourceHelper.ReadEmbeddedResource("SQLiteViewer.Assets.HtmlData.index.html");
             return InjectUrlIntoHtml(originalHtml, dbUrl);
         }
@@ -85,11 +119,6 @@ namespace SQLiteViewer.Mothods
                     Process.Start("explorer.exe", url);
                 }
             }
-        }
-
-        public void Dispose()
-        {
-            _fileServer?.Dispose();
         }
     }
 }

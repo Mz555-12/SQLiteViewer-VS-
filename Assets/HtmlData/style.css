@@ -1,161 +1,71 @@
 :root {
     --primary-color: #4a6fa5;
-    --secondary-color: #6b8cbc;
-    --background-color: #f5f7fa;
-    --table-bg-color: #ffffff;
-    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    --font-size: 14px;
-    --table-header-bg: #e9ecef;
-    --table-border-color: #dee2e6;
+    --bg-color: #f5f7fa;
 }
 
 body {
-    font-family: var(--font-family);
-    font-size: var(--font-size);
-    background-color: var(--background-color);
     margin: 0;
-    padding: 20px;
-    color: #333;
-    transition: background-color 0.3s;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--bg-color);
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
+    padding: 20px;
     background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+    min-height: 100vh;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
 }
 
-header {
-    text-align: center;
-    margin-bottom: 30px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #eee;
-}
-
-h1 {
-    color: var(--primary-color);
-    margin-bottom: 10px;
-}
-
-
-label {
-    margin-bottom: 5px;
-    font-weight: 500;
-}
-
-select, input {
-    padding: 8px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    font-family: inherit;
-}
-
-.tables-section {
-    margin-top: 20px;
-}
-
-.table-list {
+.view-toggle {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 25px;
 }
 
-.table-btn {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.table-btn:hover {
-    background-color: var(--secondary-color);
-}
-
-.table-btn.active {
-    background-color: #2c5282;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: var(--table-bg-color);
-    font-family: var(--font-family);
-    font-size: var(--font-size);
-}
-
-th, td {
-    border: 1px solid var(--table-border-color);
-    padding: 12px;
-    text-align: left;
-}
-
-th {
-    background-color: var(--table-header-bg);
+.toggle-btn {
+    display: inline-block;
+    padding: 12px 30px;
+    background: #f0f2f5;
+    border-radius: 40px;
+    font-size: 18px;
     font-weight: 600;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+    user-select: none;
 }
 
-tr:nth-child(even) {
-    background-color: rgba(0, 0, 0, 0.02);
-}
-
-.table-container {
-    overflow-x: auto;
-    margin-top: 20px;
-    border-radius: 6px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.status {
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 4px;
+.toggle-btn input {
     display: none;
 }
 
-.status.success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+.toggle-btn:has(input:checked) {
+    background: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 8px rgba(74, 111, 165, 0.3);
 }
 
-.status.error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
+iframe {
+    width: 100%;
+    height: calc(100vh - 120px);
+    border: none;
+    background: white;
+    border-radius: 8px;
 }
 
-.loading {
-    display: none;
-    text-align: center;
-    padding: 20px;
+.loading-overlay .loading {
+    background: white;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
-
-.spinner {
-    border: 4px solid rgba(0, 0, 0, 0.1);
-    border-left-color: var(--primary-color);
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 10px;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-footer {
-    text-align: center;
-    margin-top: 30px;
-    padding-top: 15px;
-    border-top: 1px solid #eee;
-    color: #6c757d;
-    font-size: 0.9em;
+.loading-overlay .spinner {
+    width: 40px;
+    height: 40px;
+    border-width: 5px;
 }
