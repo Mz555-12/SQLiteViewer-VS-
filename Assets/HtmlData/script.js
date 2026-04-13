@@ -3,7 +3,7 @@ let db = null;
 let currentTable = null;
 
 // 初始化
-document.addEventListener('DOMContentLoaded', function () {});
+document.addEventListener('DOMContentLoaded', function () { });
 
 
 // 显示表格列表
@@ -109,6 +109,8 @@ function displayTable(tableName, event) {
         const result = db.exec(`SELECT * FROM ${tableName}`);
         console.log('查询结果:', result);
 
+
+
         if (result.length === 0) {
             console.log('表格为空:', tableName);
             document.getElementById('tableContainer').innerHTML = '<p>表格为空</p>';
@@ -163,5 +165,34 @@ function displayTable(tableName, event) {
         console.error('错误堆栈:', error.stack);
         document.getElementById('tableContainer').innerHTML = `<p>显示表格时出错: ${error.message}</p>`;
     }
+}
+
+
+function loadDatabaseFromUrl(url) {
+    console.log('开始从 URL 加载数据库:', url);
+    document.getElementById('loading').style.display = 'block';
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response.arrayBuffer();
+        })
+        .then(arrayBuffer => {
+            console.log('数据库文件大小:', arrayBuffer.byteLength, 'bytes');
+            return initSqlJs({
+                locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
+            }).then(SQL => {
+                const bytes = new Uint8Array(arrayBuffer);
+                db = new SQL.Database(bytes);  // 直接赋值，不重复声明
+                console.log('数据库加载成功');
+                displayTableList();
+                document.getElementById('loading').style.display = 'none';
+            });
+        })
+        .catch(error => {
+            console.error('加载数据库失败:', error);
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('tableContainer').innerHTML = `<p>加载数据库失败: ${error.message}</p>`;
+        });
 }
 

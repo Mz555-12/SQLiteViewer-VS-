@@ -5,8 +5,10 @@ using SQLiteViewer.Models;
 using SQLiteViewer.Mothods;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -46,8 +48,16 @@ namespace SQLiteViewer.ViewModels
 
         public MainWindowViewModel()
         {
-            Setting.Instance.LoadedBaseModel_Json();
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceNames = assembly.GetManifestResourceNames();
 
+            //string message = resourceNames.Length == 0
+            //    ? "❌ 程序集中没有任何嵌入资源！"
+            //    : string.Join("\n", resourceNames);
+
+            //MessageBox.Show(message, "嵌入资源列表");
+
+            Setting.Instance.LoadedBaseModel_Json();
             ShowFileName(mainWindowModel.selectedFolderPath);
             FileExplorerViewModel.LoadFileSystem(mainWindowModel.selectedFolderPath);
         }
@@ -65,8 +75,9 @@ namespace SQLiteViewer.ViewModels
                     _closeMainWindowCommand.DoExecute = new Action<object>((o) =>
                     {
                         Setting.Instance.SetBaseModel_Json();
-
+                        
                         (o as Window).Close();
+                        connetHtml.Dispose();
                     });
                 }
                 return _closeMainWindowCommand;
@@ -246,12 +257,19 @@ namespace SQLiteViewer.ViewModels
 
         public void ShowFileName(string path)
         {
+            // 防御性检查：如果 path 为 null，使用默认值
+            if (string.IsNullOrEmpty(path))
+            {
+                mainWindowModel.currentFolder_text.Text = "文件浏览器";
+                return;
+            }
+
             string folderName = Path.GetFileName(path);
 
             if (string.IsNullOrEmpty(folderName))
             {
                 // 获取盘符，比如 "C:\" -> "C盘"
-                string driveLetter = Path.GetPathRoot(path).TrimEnd('\\', '/');
+                string driveLetter = Path.GetPathRoot(path)?.TrimEnd('\\', '/');
                 if (string.IsNullOrEmpty(driveLetter))
                 {
                     driveLetter = "文件浏览器";
@@ -259,7 +277,6 @@ namespace SQLiteViewer.ViewModels
                 folderName = driveLetter;
             }
             mainWindowModel.currentFolder_text.Text = folderName;
-
         }
 
 

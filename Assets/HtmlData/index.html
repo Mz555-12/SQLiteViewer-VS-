@@ -13,7 +13,7 @@
     <div class="container">
 
         <div class="tables-section">
-            
+
             <div id="tableList" class="table-list">
                 <!-- 表格按钮将在这里动态生成 -->
             </div>
@@ -30,67 +30,7 @@
     </div>
 
     <script src="script.js"></script>
-    <script>
-    // 从 Base64 加载数据库的函数
-    function loadDatabaseFromBase64(base64Data) {
-        console.log('开始从Base64加载数据库...');
 
-      
-        
-        document.getElementById('loading').style.display = 'block';
-        
-        try {
-            console.log('Base64数据长度:', base64Data.length);
-            
-            // 解码 Base64
-            const binaryString = atob(base64Data);
-            const bytes = new Uint8Array(binaryString.length);
-            for (let i = 0; i < binaryString.length; i++) {
-                bytes[i] = binaryString.charCodeAt(i);
-            }
-            
-            console.log('Base64解码成功，数据大小:', bytes.length, 'bytes');
-            
-            return initSqlJs({
-                locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
-            }).then(SQL => {
-                console.log('SQL.js 加载成功');
-                
-                try {
-                    // 加载数据库
-                    db = new SQL.Database(bytes);
-                    console.log('数据库加载成功');
-                    
-                    // 显示表格列表
-                    displayTableList();
-                    
-                    document.getElementById('loading').style.display = 'none';
-                    
-                } catch (dbError) {
-                    console.error('数据库操作错误:', dbError);
-                    document.getElementById('loading').style.display = 'none';
-                }
-            });
-            
-        } catch (error) {
-            console.error('Base64处理错误:', error);
-            document.getElementById('loading').style.display = 'none';
-        }
-    }
-
-    // 页面加载完成后检查是否有预加载的数据
-    window.onload = function () {
-        console.log('页面加载完成');
-        
-        // 如果 WPF 已经注入了数据库数据，就使用它
-        if (window.databaseBase64) {
-            console.log('发现预加载的数据库数据，开始加载...');
-            loadDatabaseFromBase64(window.databaseBase64);
-        } else {
-            console.log('没有预加载的数据库数据');
-        }
-    };
-</script>
 </body>
 
 </html>
